@@ -58,6 +58,18 @@ Análisis:
 
 Análisis:
 
+En la ejecución de la aplicación se identificó que la región crítica corresponde al método registerArrival de la clase ArrivalRegistry. Este método actualiza dos variables compartidas por todos los hilos: nextPosition y winner. Al ser accedidas concurrentemente por múltiples galgos, sin sincronización se producen condiciones de carrera.
+
+Las inconsistencias se observan porque varios hilos pueden leer y modificar nextPosition al mismo tiempo. Esto ocasiona que dos galgos reciban la misma posición o que el ganador se asigne de manera incorrecta. En las ejecuciones sin sincronización se evidencian resultados donde el orden de llegada no coincide con el ranking mostrado, o el ganador aparece listado después de otros corredores, lo cual refleja la falta de exclusión mutua.
+
+La solución consiste en sincronizar únicamente esa región crítica. Al declarar el método registerArrival como synchronized, se garantiza que solo un hilo a la vez pueda modificar nextPosition y winner. De esta forma, el ranking se mantiene consistente en todas las ejecuciones y el ganador siempre corresponde al primer galgo que llega. Las capturas de pantalla muestran claramente la diferencia: sin sincronización aparecen posiciones desordenadas, mientras que con sincronización el ranking es correcto y estable.
+
+![Regiones críticas ](images/sincronizacion.png)
+
+![Regiones críticas](images/no_sincronizacion1.png)
+
+![Regiones críticas](images/no_sincronizacion2.png)
+
 ---
 
 ### 3️⃣ Funcionalidades de pausa y continuación
