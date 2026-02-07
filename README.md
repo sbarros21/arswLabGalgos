@@ -54,6 +54,40 @@ src
 
 Análisis:
 
+En programación concurrente, al iniciar múltiples hilos mediante el método ***'start()'***, no existe garantía de que el flujo principal del programa
+"espere" a que dichos hilos finalicen su ejecución. Esto puede ocasionar que instrucciones secuenciales posteriores comiencen a ejecutarse mientras 
+algunos hilos continúen a medio proceso, generando resultados incompletos desde el punto de vista funcional. 
+Dado que los hilos se ejecutan de forma asíncrona e independiente (y que a cada uno de los galgos le fue asignado un hilo), resulta fundamental un mecanismo
+que permita la sincronización de la finalización de todos los hilos antes de dar continuación al flujo del programa. Para ello, se emplea el método ***'join()***, 
+en donde el hilo orquestador entra en el estado de bloqueo hasta que cada hilo de ejecución haya terminado con su tarea.
+
+De esta manera, el hilo principal espera correctamente a que todos los galgos terminen la carrera entes de consultar el registro de llegada. Ahora sí, garantizando
+que el ranking y el ganador se muestren únicamente cuando todos los hilos finalicen su ejecución.
+
+###### Evidencias de ejecución:
+
+- Estado inicial de la ejecución (los galgos están en la línea de salida).
+
+![img.png](images/Inicio de la ejecucion.png)
+
+- La carrera ha comenzado y todos los galgos han dado inicio a la competencia.
+
+![img.png](images/La carrera ha iniciado.png)
+
+- Estado final de la ejecución (todos los galgos cruzaron la meta y el registro de llegada es impreso en consola)
+
+![img.png](images/Fin de la ejecucion.png)
+
+***En Resumen***
+
+Como evidencia de la correcta sincronización de la finalización de los hilos, se adjuntaron capturas de pantalla donde se observa:
+
+- La ejecución concurrente de los galgos durante la carrera.
+
+- La impresión del orden de llegada de cada galgo.
+
+- La visualización del ganador y del total de participantes únicamente después de que todos los hilos han terminado su ejecución.
+
 ---
 
 ### 2️⃣ Identificación de inconsistencias y regiones críticas
