@@ -1,10 +1,12 @@
 # 🐕 Laboratorio 2 – Programación Concurrente: Carrera de Galgos
 
 Sebastián Barros
+
 Julián Ramírez
+
 Lina Sánchez
 
-## Arquitectura de Software (ARSW)
+## Arquitectura de Software (ARSW) - Análisis de Solución Concurrente
 
 ### Objetivo
 El objetivo de este laboratorio es que el estudiante **analice, corrija y diseñe una solución concurrente**, identificando **problemas de sincronización**, **regiones críticas** y aplicando **mecanismos adecuados de control de concurrencia** en Java.
