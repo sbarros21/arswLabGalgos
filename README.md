@@ -45,56 +45,19 @@ src
 ## Actividades a desarrollar
 
 ### 1️⃣ Sincronización de finalización de hilos
-Corrija la aplicación para que el aviso de resultados se muestre **únicamente cuando todos los hilos de los galgos hayan finalizado su ejecución**.
 
-**Pistas:**
-- La acción de iniciar la carrera y mostrar resultados se realiza desde `MainCanodromo`.
-- Puede utilizar el método `join()` de la clase `Thread`.
+Análisis:
 
 ---
 
 ### 2️⃣ Identificación de inconsistencias y regiones críticas
-Ejecute la aplicación varias veces e identifique **inconsistencias en el ranking**.
 
-**Tareas:**
-- Identificar las regiones críticas.
-- Explicar por qué generan inconsistencias.
-- Sincronizar únicamente dichas regiones.
+Análisis:
 
 ---
 
 ### 3️⃣ Funcionalidades de pausa y continuación
-Implemente las funcionalidades **Stop** y **Continue**.
 
-**Comportamiento esperado:**
-- **Stop**: todos los galgos suspenden su ejecución.
-- **Continue**: todos los galgos reanudan la carrera.
-
-**Restricciones:**
-- Usar mecanismos de sincronización del lenguaje.
-- Utilizar un **monitor común**.
-- Emplear `wait()` y `notifyAll()`.
+Análisis:
 
 ---
-
-## Criterios de evaluación
-
-### Funcionalidad
-- Ejecución detenida y reanudada consistentemente.
-- Ranking sin inconsistencias.
-
-### Diseño
-- Sincronización solo de regiones críticas.
-- Reactivación con un único llamado usando un monitor común.
-
----
-
-## Entregables
-- Código fuente funcional.
-- Explicación breve de las regiones críticas y sincronización usada.
-- Evidencia de ejecución correcta.
-
----
-
-## Observaciones finales
-Este laboratorio refuerza conceptos clave de **programación concurrente**, **diseño correcto de sincronización** y **arquitectura por capas**, que serán reutilizados en laboratorios posteriores.
