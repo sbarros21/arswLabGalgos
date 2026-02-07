@@ -78,15 +78,15 @@ Evidencia:
 
 Stop:
 
-![img.png](docs/images/pausa1.png)
+![img.png](images/pausa1.png)
 
 Continue:
 
-![img.png](docs/images/pausa2.png)
+![img.png](images/pausa2.png)
 
 Resultados:
 
-![img.png](docs/images/pausa3.png)
+![img.png](images/pausa3.png)
 
 Análisis:
 
@@ -105,24 +105,15 @@ El reto principal es que:
 
 - Ningún hilo debe quedarse bloqueado al reanudar
 
-- Esto no puede resolverse correctamente usando solo variables booleanas o sleep(), ya que eso provocaría:
-
-- Consumo innecesario de CPU
-
-- Estados inconsistentes
-
-- Hilos avanzando cuando no deberían
-
-Por eso se introduce el monitor común.
-
+- Esto no puede resolverse correctamente usando solo variables booleanas o sleep(), ya que eso provocaría multiples problemas, por eso se introduce el monitor común.
 
 Monitor común: Este es un objeto compartido por todos los hilos de los galgos y por el controlador de la carrera (botones Stop y Continue).
 
-Esto nos permite que se cumplan tres funciones fundamentales:
+Esto nos permite que se cumplan algunas funciones fundamentales:
 
 1. Exclusión mutua
 
-Se consigue gracias al uso de synchronized (monitor) y garantiza que:
+Se consigue gracias al uso de synchronized y nos garantiza que:
 
 - Solo un hilo a la vez puede acceder a la sección crítica
 
@@ -140,19 +131,18 @@ Todos los accesos a la condición de pausa/reanudación se realizan dentro de bl
 
 Stop:
 
-Cuando se presiona el botón Stop, primero, se entra a una sección sincronizada sobre el monitor, luego se cambia el estado de la variable booleana paused, así los galgos saben si deben parar o no. Cuando un galgo entra al monitor y ve que la carrera está detenida: llama a wait(), libera el monitor  y queda bloqueado hasta que vuelva a cambiar. De esta forma todos los galgos queden suspendidos, independientemente del punto exacto de la pista en el que se encuentren.
-
+Cuando se presiona el botón Stop, primero, se entra a una sección sincronizada sobre el monitor, luego se cambia el estado de la variable booleana paused, así los galgos saben si deben parar o no. Cuando un galgo entra al monitor y ve que la carrera está detenida llama a wait(), libera el monitor  y queda bloqueado hasta que vuelva a cambiar. De esta forma todos los galgos queden suspendidos, independientemente del punto exacto de la carrera en el que se encuentren.
 
 Continue:
 Por otro lado, cuando se presiona el botón Continue, se entra nuevamente a una sección sincronizada sobre el monitor, se actualiza el estado de la carrera para indicar que ya no está pausada, se ejecuta notifyAll() sobre el monitor
 
 notifyAll() es fundamental porque:
 
--Hay múltiples hilos esperando
+- Hay múltiples hilos esperando
 
--Todos deben despertarse
+- Todos deben despertarse
 
--Usar notify() podría dejar algunos galgos bloqueados indefinidamente
+- Usar notify() podría dejar algunos galgos bloqueados indefinidamente
 
 Al despertarse, cada galgo, recupera el monitor, vuelve a evaluar la condición de pausa, continúa su ejecución normal si la carrera ya está activa
 
@@ -166,18 +156,13 @@ El uso de bloques synchronized sobre un único monitor garantiza que:
 
 - Todos los hilos observan un estado coherente del sistema
 
-Esto evita errores clásicos de concurrencia como:
-
-Algunos hhilos avanzando mientras la carrera debería estar detenida o cambios de estado que no son visibles para otros hilos
+Esto evita errores clásicos de concurrencia como tener algunos hhilos avanzando mientras la carrera debería estar detenida o cambios de estado que no son visibles para otros hilos
 
 2. Espera eficiente sin consumo innecesario de CPU
 
 Cuando un galgo detecta que la carrera está pausada, entra en estado de espera gracias a wait().
-Esto significa que:
 
-- El hilo se bloquea completamente
-
-- No consume tiempo de CPU mientras está detenido
+Esto significa que el hilo se bloquea completamente por ende no consume tiempo de CPU mientras está detenido
 
 3. Coordinación centralizada entre todos los hilos
 
@@ -187,15 +172,9 @@ El monitor común actúa como un punto central de coordinación, lo que permite 
 
 - No sea necesario controlar cada hilo de manera individual
 
-- El comportamiento global de la carrera sea consistente
+- el comportamiento global de la carrera sea consistente
 
-Esto simplifica considerablemente el diseño, ya que:
-
-No se requiere lógica adicional por cada galgo
-
-No existen dependencias complejas entre hilos
-
-El flujo de control es claro y fácil de seguir
+Esto simplifica el diseño, ya que, no se requiere lógica adicional por cada galgo, no existen dependencias complejas entre hilos y el flujo de control es claro y fácil de seguir
 
 4. Reanudación correcta y completa con notifyAll()
 
@@ -207,7 +186,7 @@ El uso de notifyAll() asegura que:
 
 - La carrera se reanuda de forma completa y simultánea
 
-Esto es clave en escenarios con múltiples hilos, ya que usar, por ejemplo, notify(): Podría despertar solo a un galgo, dejar a otros bloqueados indefinidamente, provocar un estado inconsistente en la carrera
+Esto es importante cuando hay múltiples hilos ya que usar, por ejemplo, notify(): Podría despertar solo a un galgo, dejar a otros bloqueados indefinidamente, provocar un estado inconsistente en la carrera
 
 5. Control cooperativo de los hilos 
 
