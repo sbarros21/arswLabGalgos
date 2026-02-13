@@ -33,7 +33,6 @@ public class Galgo extends Thread {
             if (paso == carril.size()) {
                 carril.finish();
                 var snapshot = registry.registerArrival(getName());
-                System.out.printf("El galgo %s llego en la posicion %d%n", getName(), snapshot.position());
             }
         }
     }

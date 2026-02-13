@@ -14,7 +14,7 @@ class ArrivalRegistryTest {
     @Test
     void registerArrival_assignsUniquePositionsAndWinner() throws Exception {
         int n = 50;
-        ArrivalRegistry registry = new ArrivalRegistry();
+        ArrivalRegistry registry = new ArrivalRegistry(17);
 
         // Use a pool with n threads so every submitted task can start and call
         // ready.countDown()

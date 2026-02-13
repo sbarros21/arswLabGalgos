@@ -19,7 +19,7 @@ public final class MainCanodromo {
     private static Galgo[] galgos;
     private static Canodromo can;
 
-    private static final ArrivalRegistry registry = new ArrivalRegistry();
+    private static final ArrivalRegistry registry = new ArrivalRegistry(17);
     private static final RaceControl control = new RaceControl();
 
     public static void main(String[] args) {
@@ -50,11 +50,17 @@ public final class MainCanodromo {
                     }
 
                     // 3) show results ONLY after all threads finished
-                    String winner = registry.getWinner();
-                    int total = registry.getNextPosition() - 1;
+                    System.out.println("Lista completa de llegada");
+                    System.out.println(registry.getPosiciones());
 
-                    can.winnerDialog(winner, total);
-                    System.out.println("El ganador fue: " + winner);
+                    System.out.println("\nDetalle por posición:");
+                    var posiciones = registry.getPosiciones();
+
+                    for (int i = 0; i < posiciones.size(); i++) {
+                        String galgo = posiciones.get(i);
+                        System.out.println("El galgo " + galgo +
+                                " llegó en la posición " + (i + 1));
+                    }
                 }, "race-orchestrator").start();
             }
         });

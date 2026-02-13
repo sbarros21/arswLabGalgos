@@ -1,32 +1,41 @@
 package edu.eci.arsw.dogsrace.domain;
 
-import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-/**
- * Thread-safe arrival registry.
- * Critical section is limited to the position assignment and winner selection.
- */
+
 public final class ArrivalRegistry {
 
-    private int nextPosition = 1;
-    private String winner = null;
+    private final AtomicInteger nextPosition = new AtomicInteger(1);
+    private final List<String> posiciones;
+    private volatile String winner = null;
 
-    public synchronized ArrivalSnapshot registerArrival(String dogName) {
-        Objects.requireNonNull(dogName, "dogName");
-        final int position = nextPosition++;
+    public ArrivalRegistry(int totalDogs) {
+        this.posiciones = new ArrayList<>(
+                Collections.nCopies(totalDogs, null)
+        );
+    }
+
+    public ArrivalSnapshot registerArrival(String dogName) {
+        int position = nextPosition.getAndIncrement();
+        posiciones.set(position - 1, dogName);
         if (position == 1) {
             winner = dogName;
         }
+
         return new ArrivalSnapshot(position, winner);
     }
 
-    public synchronized int getNextPosition() {
-        return nextPosition;
-    }
+    public String getWinner() {return winner;}
 
-    public synchronized String getWinner() {
-        return winner;
-    }
+    public int getNextPosition() {return nextPosition.get();}
 
-    public record ArrivalSnapshot(int position, String winner) { }
+    public List<String> getPosiciones() {return List.copyOf(posiciones);}
+
+    public record ArrivalSnapshot(int position, String winner) {}
 }
+
+
