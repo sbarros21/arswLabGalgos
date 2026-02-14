@@ -2,6 +2,7 @@ package edu.eci.arsw.dogsrace.domain;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
@@ -14,7 +15,7 @@ class ArrivalRegistryTest {
     @Test
     void registerArrival_assignsUniquePositionsAndWinner() throws Exception {
         int n = 50;
-        ArrivalRegistry registry = new ArrivalRegistry(17);
+        ArrivalRegistry registry = new ArrivalRegistry(n);
 
         // Use a pool with n threads so every submitted task can start and call
         // ready.countDown()
@@ -55,4 +56,24 @@ class ArrivalRegistryTest {
         assertNotNull(registry.getWinner(), "Winner must be set");
         assertEquals(n + 1, registry.getNextPosition(), "Next position must be n+1");
     }
+
+    @Test
+    void winnerIsFirstDog() {
+        ArrivalRegistry registry = new ArrivalRegistry(3);
+        registry.registerArrival("dog-1");
+        registry.registerArrival("dog-2");
+
+        assertEquals("dog-1", registry.getWinner(), "Winner must be the first dog");
+    }
+
+    @Test void posicionesContainAllDogsInOrder() { 
+        ArrivalRegistry registry = new ArrivalRegistry(3); 
+        registry.registerArrival("dog-A"); 
+        registry.registerArrival("dog-B"); 
+        registry.registerArrival("dog-C"); 
+        
+        List<String> posiciones = registry.getPosiciones(); 
+        assertEquals(List.of("dog-A", "dog-B", "dog-C"), posiciones); 
+    }
+
 }

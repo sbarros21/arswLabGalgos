@@ -44,4 +44,46 @@ class RaceControlTest {
         worker.join(500);
         assertFalse(worker.isAlive());
     }
+
+    @Test
+    void isPausedReflectsState() {
+        RaceControl control = new RaceControl();
+        assertFalse(control.isPaused(), "Initially not paused");
+
+        control.pause();
+        assertTrue(control.isPaused(), "Should be paused after pause()");
+
+        control.resume();
+        assertFalse(control.isPaused(), "Should not be paused after resume()");
+    }
+
+    @Test
+    void multipleThreadsBlockAndResume() throws Exception {
+        RaceControl control = new RaceControl();
+        AtomicInteger ticks = new AtomicInteger(0);
+
+        Runnable worker = () -> {
+            try {
+                control.awaitIfPaused();
+                ticks.incrementAndGet();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        };
+
+        Thread t1 = new Thread(worker);
+        Thread t2 = new Thread(worker);
+
+        control.pause();
+        t1.start();
+        t2.start();
+        TimeUnit.MILLISECONDS.sleep(50);
+        assertEquals(0, ticks.get(), "No ticks while paused");
+
+        control.resume();
+        t1.join(200);
+        t2.join(200);
+        assertEquals(2, ticks.get(), "Both threads should tick after resume");
+    }
+
 }
